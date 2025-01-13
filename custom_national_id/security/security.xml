@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_national_id" model="ir.module.category">
+        <field name="name">National ID</field>
+        <field name="description">User access level for National ID applications</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="group_national_id_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_national_id"/>
+    </record>
+
+    <record id="group_national_id_stage1_approver" model="res.groups">
+        <field name="name">Stage 1 Approver</field>
+        <field name="category_id" ref="module_category_national_id"/>
+        <field name="implied_ids" eval="[(4, ref('group_national_id_user'))]"/>
+    </record>
+
+    <record id="group_national_id_stage2_approver" model="res.groups">
+        <field name="name">Stage 2 Approver</field>
+        <field name="category_id" ref="module_category_national_id"/>
+        <field name="implied_ids" eval="[(4, ref('group_national_id_stage1_approver'))]"/>
+    </record>
+</odoo>

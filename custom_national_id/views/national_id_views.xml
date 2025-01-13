@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_national_id_application_form" model="ir.ui.view">
+        <field name="name">national.id.application.form</field>
+        <field name="model">national.id.application</field>
+        <field name="arch" type="xml">
+            <form string="National ID Application">
+                <header>
+                    <button name="action_submit" string="Submit" type="object" 
+                            class="oe_highlight" states="draft"/>
+                    <button name="action_stage1_approve" string="Stage 1 Approve" type="object"
+                            class="oe_highlight" states="submitted"
+                            groups="national_id.group_national_id_stage1_approver"/>
+                    <button name="action_stage2_approve" string="Stage 2 Approve" type="object"
+                            class="oe_highlight" states="stage1"
+                            groups="national_id.group_national_id_stage2_approver"/>
+                    <button name="action_approve" string="Final Approve" type="object"
+                            class="oe_highlight" states="stage2"
+                            groups="national_id.group_national_id_stage2_approver"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            class="btn-danger" states="submitted,stage1,stage2"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="applicant_name"/>
+                            <field name="birth_date"/>
+                            <field name="gender"/>
+                        </group>
+                        <group>
+                            <field name="phone"/>
+                            <field name="address"/>
+                        </group>
+                    </group>
+                    <group string="Documents">
+                        <field name="photo" widget="image"/>
+                        <field name="lc_letter" widget="binary" filename="lc_letter_filename"/>
+                    </group>
+                    <group string="Approval Information" attrs="{'invisible': [('state', '=', 'draft')]}">
+                        <field name="stage1_approver_id" readonly="1"/>
+                        <field name="stage2_approver_id" readonly="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_national_id_application_tree" model="ir.ui.view">
+        <field name="name">national.id.application.tree</field>
+        <field name="model">national.id.application</field>
+        <field name="arch" type="xml">
+            <tree string="National ID Applications" decoration-info="state == 'draft'" 
+                  decoration-warning="state in ('submitted','stage1')" 
+                  decoration-success="state == 'approved'" 
+                  decoration-danger="state == 'rejected'">
+                <field name="name"/>
+                <field name="applicant_name"/>
+                <field name="birth_date"/>
+                <field name="phone"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_national_id_application_search" model="ir.ui.view">
+        <field name="name">national.id.application.search</field>
+        <field name="model">national.id.application</field>
+        <field name="arch" type="xml">
+            <search string="Search Applications">
+                <field name="name"/>
+                <field name="applicant_name"/>
+                <field name="phone"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
+                <filter string="Stage 1" name="stage1" domain="[('state','=','stage1')]"/>
+                <filter string="Stage 2" name="stage2" domain="[('state','=','stage2')]"/>
+                <filter string="Approved" name="approved" domain="[('state','=','approved')]"/>
+                <filter string="Rejected" name="rejected" domain="[('state','=','rejected')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="status" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_national_id_application" model="ir.actions.act_window">
+        <field name="name">National ID Applications</field>
+        <field name="res_model">national.id.application</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_national_id_application_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first National ID application!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_national_id_root" 
+              name="National ID"
+              sequence="10"/>
+
+    <menuitem id="menu_national_id_application" 
+              name="Applications"
+              parent="menu_national_id_root"
+              action="action_national_id_application"
+              sequence="10"/>
+</odoo>
+
