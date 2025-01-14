@@ -1,4 +1,4 @@
-#!/home/ghost16/Learn/national_id/myenv/bin/python3
+#!/home/ghost16/Learn/national_id/myenv/bin/python3.12
 
 # Copyright: This module has been placed in the public domain.
 

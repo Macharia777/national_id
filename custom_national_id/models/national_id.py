@@ -1,3 +1,6 @@
+import sys
+sys.path.append('/home/ghost16/Learn/national_id/odoo-18.0/odoo-18.0/odoo')
+
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
@@ -34,6 +37,10 @@ class NationalIDApplication(models.Model):
 
     @api.model
     def create(self, vals):
+        sequence = self.env['ir.sequence'].search([('code', '=', 'national.id.application')])
+        if not sequence:
+            raise UserError("The National ID Application sequence does not exist. Please define it in the system.")
+        
         if vals.get('name', 'New') == 'New':
             vals['name'] = self.env['ir.sequence'].next_by_code('national.id.application')
         return super(NationalIDApplication, self).create(vals)
@@ -43,6 +50,8 @@ class NationalIDApplication(models.Model):
         self.message_post(body="Application submitted for review")
 
     def action_stage1_approve(self):
+        if self.state != 'submitted':
+          raise UserError("Application must be submitted before Stage 1 approval.")
         self.state = 'stage1'
         self.stage1_approver_id = self.env.user.id
         self.message_post(body=f"Stage 1 approved by {self.env.user.name}")

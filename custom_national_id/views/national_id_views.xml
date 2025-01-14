@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Define the Sequence for National ID Applications -->
+    <record id="seq_national_id_application" model="ir.sequence">
+        <field name="name">National ID Application Sequence</field>
+        <field name="code">national.id.application</field>
+        <field name="prefix">NA-</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+        <field name="active">True</field>
+    </record>
+
     <!-- Form View -->
     <record id="view_national_id_application_form" model="ir.ui.view">
         <field name="name">national.id.application.form</field>
@@ -8,18 +18,18 @@
             <form string="National ID Application">
                 <header>
                     <button name="action_submit" string="Submit" type="object" 
-                            class="oe_highlight" states="draft"/>
+                            class="oe_highlight" domain="[('state', '=', 'draft')]"/>
                     <button name="action_stage1_approve" string="Stage 1 Approve" type="object"
-                            class="oe_highlight" states="submitted"
+                            class="oe_highlight" domain="[('state', '=', 'submitted')]"
                             groups="national_id.group_national_id_stage1_approver"/>
                     <button name="action_stage2_approve" string="Stage 2 Approve" type="object"
-                            class="oe_highlight" states="stage1"
+                            class="oe_highlight" domain="[('state', '=', 'stage1')]"
                             groups="national_id.group_national_id_stage2_approver"/>
                     <button name="action_approve" string="Final Approve" type="object"
-                            class="oe_highlight" states="stage2"
+                            class="oe_highlight" domain="[('state', '=', 'stage2')]"
                             groups="national_id.group_national_id_stage2_approver"/>
                     <button name="action_reject" string="Reject" type="object"
-                            class="btn-danger" states="submitted,stage1,stage2"/>
+                            class="btn-danger" domain="[('state', 'in', ['submitted', 'stage1', 'stage2'])]"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -43,7 +53,8 @@
                         <field name="photo" widget="image"/>
                         <field name="lc_letter" widget="binary" filename="lc_letter_filename"/>
                     </group>
-                    <group string="Approval Information" attrs="{'invisible': [('state', '=', 'draft')]}">
+                    <group string="Approval Information" 
+                           visibility="{'invisible': [('state', '=', 'draft')]}">
                         <field name="stage1_approver_id" readonly="1"/>
                         <field name="stage2_approver_id" readonly="1"/>
                     </group>
@@ -62,10 +73,8 @@
         <field name="name">national.id.application.tree</field>
         <field name="model">national.id.application</field>
         <field name="arch" type="xml">
-            <tree string="National ID Applications" decoration-info="state == 'draft'" 
-                  decoration-warning="state in ('submitted','stage1')" 
-                  decoration-success="state == 'approved'" 
-                  decoration-danger="state == 'rejected'">
+            <tree string="National ID Applications">
+                <!-- Decorations based on state -->
                 <field name="name"/>
                 <field name="applicant_name"/>
                 <field name="birth_date"/>
@@ -122,4 +131,3 @@
               action="action_national_id_application"
               sequence="10"/>
 </odoo>
-
