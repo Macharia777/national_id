@@ -69,17 +69,38 @@
     </record>
 
     <!-- Tree View -->
-    <record id="view_national_id_application_tree" model="ir.ui.view">
+   <record id="view_national_id_application_tree" model="ir.ui.view">
         <field name="name">national.id.application.tree</field>
         <field name="model">national.id.application</field>
+        <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="National ID Applications">
-                <!-- Decorations based on state -->
-                <field name="name"/>
-                <field name="applicant_name"/>
-                <field name="birth_date"/>
-                <field name="phone"/>
-                <field name="state"/>
+            <tree string="National ID Applications" 
+                decoration-info="state == 'draft'" 
+                decoration-warning="state == 'pending'" 
+                decoration-success="state == 'approved'" 
+                decoration-danger="state == 'rejected'"
+                decoration-muted="state == 'cancelled'"
+                multi_edit="1"
+                sample="1">
+
+                <field name="name" readonly="1"/>
+                <field name="applicant_name" string="Applicant"/>
+                <field name="birth_date" optional="show"/>
+                <field name="gender" optional="show"/>
+                <field name="phone" optional="show"/>
+                <field name="email" optional="hide"/>
+                <field name="address" optional="hide"/>
+                <field name="application_date" optional="show"/>
+                <field name="state" widget="badge" 
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'pending'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"/>
+                <field name="priority" widget="priority" optional="show"/>
+                <field name="create_date" optional="hide"/>
+                <field name="write_date" optional="hide"/>
+                <field name="create_uid" optional="hide"/>
+                <field name="write_uid" optional="hide"/>
             </tree>
         </field>
     </record>
